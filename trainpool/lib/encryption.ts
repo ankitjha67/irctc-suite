@@ -15,13 +15,15 @@ import {
   hkdfSync,
 } from "node:crypto";
 
-const MASTER_SECRET = process.env.TRIP_ENCRYPTION_SECRET;
-if (!MASTER_SECRET || MASTER_SECRET.length < 32) {
-  throw new Error(
-    "TRIP_ENCRYPTION_SECRET must be set and at least 32 characters"
-  );
+function getMasterSecret(): string {
+  const secret = process.env.TRIP_ENCRYPTION_SECRET;
+  if (!secret || secret.length < 32) {
+    throw new Error(
+      "TRIP_ENCRYPTION_SECRET must be set and at least 32 characters"
+    );
+  }
+  return secret;
 }
-
 const ALGO = "aes-256-gcm";
 const IV_LEN = 12;
 const TAG_LEN = 16;
@@ -30,7 +32,7 @@ const KEY_INFO = Buffer.from("trainpool-id-v1");
 function deriveTripKey(tripSlug: string): Buffer {
   // HKDF-SHA256 → 32-byte key, scoped to this trip's slug
   const salt = Buffer.from(tripSlug, "utf8");
-  const ikm = Buffer.from(MASTER_SECRET!, "utf8");
+  const ikm = Buffer.from(getMasterSecret(), "utf8");
   const okm = hkdfSync("sha256", ikm, salt, KEY_INFO, 32);
   return Buffer.from(okm);
 }
