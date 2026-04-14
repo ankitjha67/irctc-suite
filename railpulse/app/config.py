@@ -1,6 +1,7 @@
 """Settings loaded from environment via pydantic-settings."""
 
 from functools import lru_cache
+
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -12,9 +13,14 @@ class Settings(BaseSettings):
     env: str = "dev"  # dev | staging | prod
     secret_key: str = "change-me"
 
-    # Database
+    # Database — Supabase pooler URL in prod. Accepts either sync or async SQLAlchemy
+    # driver URLs; the connection module normalizes to async automatically.
+    # Example (pooler):
+    #   postgresql+psycopg://postgres.<ref>:<pwd>@aws-0-<region>.pooler.supabase.com:5432/postgres
     database_url: str = "postgresql+psycopg://railpulse:railpulse@localhost:5432/railpulse"
-    redis_url: str = "redis://localhost:6379/0"
+
+    # Kept for future use; v0 does not depend on Redis.
+    redis_url: str | None = None
 
     # RapidAPI — primary + fallback providers
     rapidapi_key: str = ""
@@ -29,12 +35,15 @@ class Settings(BaseSettings):
 
     # Model
     model_path: str = "models/v0_logistic.pkl"
-    model_version: str = "v0.1.0"
+    model_version: str = "v0-heuristic"
 
-    # Polling
+    # Polling (Celery — wired in Weekend 2)
     poll_batch_size: int = 20
-    poll_interval_seconds: int = 3600   # 1 hour
+    poll_interval_seconds: int = 3600
     poll_rate_per_second: float = 3.0
+
+    # Test / dev hooks
+    disable_db: bool = False  # set by tests to skip DB wiring entirely
 
 
 @lru_cache(maxsize=1)
