@@ -11,8 +11,8 @@ Design notes:
 
 from __future__ import annotations
 
-from dataclasses import dataclass, asdict
-from datetime import date, datetime, timedelta
+from dataclasses import dataclass
+from datetime import date, datetime
 from typing import Any
 
 FEATURE_VERSION = "v1"

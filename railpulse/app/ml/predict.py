@@ -7,7 +7,6 @@ function that returns a calibrated probability, bucket, and confidence interval.
 
 from __future__ import annotations
 
-import json
 import logging
 from dataclasses import dataclass
 from pathlib import Path
@@ -18,7 +17,6 @@ import numpy as np
 
 from app.config import get_settings
 from app.ml.features import (
-    FEATURE_VERSION,
     QueryContext,
     TrainMetadata,
     compute_features,
@@ -118,7 +116,6 @@ class RailPulseModel:
         Zero-model fallback. DO NOT ship this as the primary predictor.
         Calibrated on rough intuitions from published Confirmtkt/ixigo stats.
         """
-        wl_norm = features["wl_position_normalized"]
         days = features["days_before_travel"]
         premium = features["is_premium"]
         festive = features["is_festive_week"]
